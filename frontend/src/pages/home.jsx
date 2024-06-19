@@ -4,7 +4,7 @@ const Home = () => {
 	return (
 		<div className="text-center p-8 max-w-lg bg-white shadow-md rounded">
 			<h1 className="text-3xl font-bold mb-4">
-				Welcome to the Student Web Application
+				Welcome to the School Learning Platform
 			</h1>
 			<p className="mb-6 text-gray-700">
 				Our platform is designed to help school students learn various

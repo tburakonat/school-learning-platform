@@ -6,7 +6,7 @@ const Navbar = () => {
 			<div className="container mx-auto flex justify-between items-center">
 				<Link to="/">
 					<div className="text-white text-lg font-bold">
-						Student Web Application
+						School Learning Platform
 					</div>
 				</Link>
 				<div>

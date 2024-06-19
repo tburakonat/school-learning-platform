@@ -17,10 +17,30 @@ const Register = () => {
 		});
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
-		// Add form submission logic here
 		console.log(formData);
+
+		if (formData.password !== formData.confirmPassword) {
+			alert("Passwords do not match");
+			return;
+		}
+
+		try {
+			const response = await fetch("http://localhost:3000/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(formData),
+			});
+
+			const data = await response.json();
+
+			console.log(data);
+		} catch (error) {
+			console.error("Error during registration:", error);
+		}
 	};
 
 	return (

@@ -15,10 +15,25 @@ const Login = () => {
 		});
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
-		// Add form submission logic here
 		console.log(formData);
+
+		try {
+			const response = await fetch("http://localhost:3000/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(formData),
+			});
+
+			const data = await response.json();
+
+			console.log(data);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return (
