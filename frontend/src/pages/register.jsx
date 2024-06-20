@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserContext";
+import ReCAPTCHA from "react-google-recaptcha";
+import "friendly-challenge/widget";
 
 const Register = () => {
+	const recaptcha = useRef();
 	const { login } = useAuth();
 	const [formData, setFormData] = useState({
 		username: "",
@@ -24,6 +27,13 @@ const Register = () => {
 	const handleSubmit = async e => {
 		e.preventDefault();
 
+		const captchaValue = recaptcha.current.getValue();
+
+		if (!captchaValue) {
+			setError("Please complete the reCAPTCHA");
+			return;
+		}
+
 		if (formData.password !== formData.confirmPassword) {
 			setError("Passwords do not match");
 			return;
@@ -33,7 +43,7 @@ const Register = () => {
 			const response = await fetch("http://localhost:3000/register", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(formData),
+				body: JSON.stringify({ ...formData, captchaValue }),
 			});
 
 			const data = await response.json();
@@ -117,6 +127,11 @@ const Register = () => {
 						required
 					/>
 				</div>
+				{/* <ReCAPTCHA
+					sitekey="6Le7vv0pAAAAABCSnZArnpKvIcC7kYiyhH5-hQty"
+					ref={recaptcha}
+				/> */}
+				<div class="frc-captcha" data-sitekey="FCMP6M9E2PNENOV4"></div>
 				<button
 					type="submit"
 					className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200"
