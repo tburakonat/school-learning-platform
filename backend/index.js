@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, ServerApiVersion, ObjectId } from "mongodb";
 import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 
@@ -16,6 +18,7 @@ app.use(
 app.use(express.json());
 
 const uri = process.env.MONGO_URI;
+const jwtSecret = process.env.JWT_SECRET;
 
 const client = new MongoClient(uri, {
 	serverApi: {
@@ -42,24 +45,23 @@ app.post("/login", async (req, res) => {
 		const database = client.db("myDatabase");
 		const usersCollection = database.collection("users");
 
-		// Find user by identifier (username or email)
 		const user = await usersCollection.findOne({
 			$or: [{ username: identifier }, { email: identifier }],
 		});
 
-		if (user) {
-			console.log("User found:", user);
-			// Check if password is correct
-			if (user.password !== password) {
-				console.log("Incorrect password");
-				res.status(401).json({
-					message: "Invalid identifier or password",
-				});
-			} else {
-				res.json({ message: "Login successful" });
-			}
+		if (user && (await bcrypt.compare(password, user.password))) {
+			const token = jwt.sign(
+				{
+					userId: user._id,
+					username: user.username,
+					email: user.email,
+					role: user.role,
+				},
+				jwtSecret,
+				{ expiresIn: "1h" }
+			);
+			res.json({ message: "Login successful", token });
 		} else {
-			console.log("User not found");
 			res.status(401).json({ message: "Invalid identifier or password" });
 		}
 	} catch (error) {
@@ -84,17 +86,113 @@ app.post("/register", async (req, res) => {
 			return res.status(400).json({ message: "User already exists" });
 		}
 
+		const hashedPassword = await bcrypt.hash(password, 10);
+
 		const result = await usersCollection.insertOne({
 			username,
 			email,
-			password,
+			password: hashedPassword,
+			role: "student",
 		});
 
 		console.log("User registered:", result);
+		// Generate a JWT token
+		const token = jwt.sign(
+			{ userId: result.insertedId, username, role: "student" },
+			process.env.JWT_SECRET,
+			{ expiresIn: "1h" }
+		);
 
-		res.json({ message: "Registration successful" });
+		res.json({ message: "Registration successful", token });
 	} catch (error) {
 		console.error("Error during registration:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+// Middleware to verify the admin role
+const verifyAdmin = (req, res, next) => {
+	try {
+		const token = req.headers.authorization.split(" ")[1];
+		const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+		if (decodedToken.role !== "admin") {
+			return res
+				.status(403)
+				.json({ message: "Access forbidden: Admins only" });
+		}
+		req.user = decodedToken;
+		next();
+	} catch (error) {
+		return res.status(401).json({ message: "Unauthorized" });
+	}
+};
+
+const verifyTeacher = async (req, res, next) => {
+	const token = req.headers.authorization?.split(" ")[1];
+	if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		const database = client.db("myDatabase");
+		const usersCollection = database.collection("users");
+		const user = await usersCollection.findOne({
+			_id: new ObjectId(decoded.userId),
+		});
+
+		if (user.role !== "teacher") {
+			return res.status(403).json({ message: "Forbidden" });
+		}
+
+		req.user = user;
+		next();
+	} catch (error) {
+		console.error("Authentication error:", error);
+		res.status(401).json({ message: "Unauthorized" });
+	}
+};
+
+app.get("/users", verifyAdmin, async (req, res) => {
+	try {
+		const database = client.db("myDatabase");
+		const usersCollection = database.collection("users");
+		const users = await usersCollection.find({}).toArray();
+		res.json(users);
+	} catch (error) {
+		console.error("Error fetching users:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+// Route to update user role
+app.patch("/users/:username/role", verifyAdmin, async (req, res) => {
+	const { username } = req.params;
+	const { role } = req.body;
+
+	try {
+		const database = client.db("myDatabase");
+		const usersCollection = database.collection("users");
+		const result = await usersCollection.findOneAndUpdate(
+			{ username },
+			{ $set: { role } }
+		);
+
+		res.json({ message: "User role updated successfully" });
+	} catch (error) {
+		console.error("Error updating user role:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+app.get("/students", verifyTeacher, async (req, res) => {
+	try {
+		const database = client.db("myDatabase");
+		const usersCollection = database.collection("users");
+		const students = await usersCollection
+			.find({ role: "student" })
+			.toArray();
+		res.json(students);
+	} catch (error) {
+		console.error("Error fetching students:", error);
 		res.status(500).json({ message: "Internal server error" });
 	}
 });
