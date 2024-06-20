@@ -5,6 +5,11 @@ import Login from "./pages/login";
 import ResetPassword from "./pages/reset-password";
 import CreatePassword from "./pages/create-password";
 import Layout from "./pages/layout";
+import AnonymousRoute from "./components/anonymous-route";
+import Me from "./pages/me";
+import ProtectedRoute from "./components/protected-route";
+import AdminDashboard from "./pages/admin-dashboard";
+import TeacherDashboard from "./pages/teacher-dashboard";
 
 function App() {
 	return (
@@ -12,8 +17,48 @@ function App() {
 			<Layout>
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/register" element={<Register />} />
-					<Route path="/login" element={<Login />} />
+					<Route
+						path="/login"
+						element={
+							<AnonymousRoute>
+								<Login />
+							</AnonymousRoute>
+						}
+					/>
+					<Route
+						path="/register"
+						element={
+							<AnonymousRoute>
+								<Register />
+							</AnonymousRoute>
+						}
+					/>
+					<Route
+						path="/me"
+						element={
+							<ProtectedRoute
+								roles={["student", "teacher", "admin"]}
+							>
+								<Me />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/teacher-dashboard"
+						element={
+							<ProtectedRoute roles={["teacher"]}>
+								<TeacherDashboard />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin-dashboard"
+						element={
+							<ProtectedRoute roles={["admin"]}>
+								<AdminDashboard />
+							</ProtectedRoute>
+						}
+					/>
 					<Route path="/reset-password" element={<ResetPassword />} />
 					<Route
 						path="/create-password"
