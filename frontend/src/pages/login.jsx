@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/UserContext";
 
 const Login = () => {
+	const { login } = useAuth();
+	const navigate = useNavigate();
+	const location = useLocation();
+	const [error, setError] = useState("");
 	const [formData, setFormData] = useState({
 		identifier: "",
 		password: "",
@@ -17,7 +22,6 @@ const Login = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-		console.log(formData);
 
 		try {
 			const response = await fetch("http://localhost:3000/login", {
@@ -29,16 +33,20 @@ const Login = () => {
 			});
 
 			const data = await response.json();
-
-			console.log(data);
+			if (!response.ok) {
+				throw new Error(data.message || "Login failed");
+			}
+			login(data.token);
+			navigate(location.state?.from || "/me");
 		} catch (error) {
-			console.error(error);
+			setError(error.message);
 		}
 	};
 
 	return (
 		<div className="bg-white p-8 rounded shadow-md w-full max-w-md">
 			<h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+			{error && <p className="text-red-500">{error}</p>}
 			<form onSubmit={handleSubmit}>
 				<div className="mb-4">
 					<label

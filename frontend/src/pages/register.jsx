@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/UserContext";
 
 const Register = () => {
+	const { login } = useAuth();
 	const [formData, setFormData] = useState({
 		username: "",
 		email: "",
 		password: "",
 		confirmPassword: "",
 	});
+	const [error, setError] = useState("");
+	const navigate = useNavigate();
 
 	const handleChange = e => {
 		const { name, value } = e.target;
@@ -19,33 +23,34 @@ const Register = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-		console.log(formData);
 
 		if (formData.password !== formData.confirmPassword) {
-			alert("Passwords do not match");
+			setError("Passwords do not match");
 			return;
 		}
 
 		try {
 			const response = await fetch("http://localhost:3000/register", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(formData),
 			});
 
 			const data = await response.json();
-
-			console.log(data);
+			if (!response.ok) {
+				throw new Error(data.message || "Registration failed");
+			}
+			login(data.token);
+			navigate("/me");
 		} catch (error) {
-			console.error("Error during registration:", error);
+			setError(error.message);
 		}
 	};
 
 	return (
 		<div className="bg-white p-8 rounded shadow-md w-full max-w-md">
 			<h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+			{error && <p className="text-red-500">{error}</p>}
 			<form onSubmit={handleSubmit}>
 				<div className="mb-4">
 					<label
