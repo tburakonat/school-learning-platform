@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const jwtSecret = process.env.JWT_SECRET;
+const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
 
 export async function login(req, res) {
 	const { identifier, password } = req.body;
@@ -39,23 +40,21 @@ export async function login(req, res) {
 }
 
 export async function register(req, res) {
-	console.log("Registering user:", req.body);
-	const recaptchaToken = req.body["frc-captcha-solution"];
-	const { username, email, password } = req.body;
+	const { username, email, password, captchaValue } = req.body;
 
 	try {
 		const verifyResponse = await fetch(
-			`https://api.friendlycaptcha.com/api/v1/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&solution=${recaptchaToken}`
+			`https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${captchaValue}`,
+			{
+				method: "POST",
+			}
 		);
 
 		const data = await verifyResponse.json();
 
-		console.log("reCAPTCHA verification response:", data);
-
 		if (!data.success) {
-			return res
-				.status(400)
-				.json({ message: data.errors || "Invalid reCAPTCHA token" });
+			console.error("Invalid reCAPTCHA token", data);
+			return res.status(400).json({ message: "Invalid reCAPTCHA token" });
 		}
 	} catch (error) {
 		console.error("Error verifying reCAPTCHA token:", error);

@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserContext";
 import ReCAPTCHA from "react-google-recaptcha";
-import "friendly-challenge/widget";
 
 const Register = () => {
 	const recaptcha = useRef();
@@ -127,11 +126,10 @@ const Register = () => {
 						required
 					/>
 				</div>
-				{/* <ReCAPTCHA
-					sitekey="6Le7vv0pAAAAABCSnZArnpKvIcC7kYiyhH5-hQty"
+				<ReCAPTCHA
+					sitekey="6Leb0f0pAAAAAEIHe2ZYSnst33YlW16v1F_TWUb2"
 					ref={recaptcha}
-				/> */}
-				<div class="frc-captcha" data-sitekey="FCMP6M9E2PNENOV4"></div>
+				/>
 				<button
 					type="submit"
 					className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200"
