@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { ObjectId } from "mongodb";
+import { client } from "../utils/db.js";
 
 dotenv.config();
 

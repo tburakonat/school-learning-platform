@@ -9,7 +9,7 @@ import { verifyAdmin, verifyTeacher } from "../middleware/authMiddleware.js";
 const router = Router();
 
 router.get("/users", verifyAdmin, getUsers);
-router.patch("/users/:username/role", verifyAdmin, updateUserRole);
+router.patch("/users/:username/role", verifyTeacher, updateUserRole);
 router.get("/students", verifyTeacher, getStudents);
 
 export default router;
