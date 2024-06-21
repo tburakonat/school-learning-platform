@@ -118,3 +118,46 @@ export async function register(req, res) {
 		res.status(500).json({ message: "Internal server error" });
 	}
 }
+
+export async function resetPassword(req, res) {
+	const { email } = req.body;
+
+	try {
+		const database = client.db("myDatabase");
+		const usersCollection = database.collection("users");
+
+		const user = await usersCollection.findOne({ email });
+
+		if (!user) {
+			console.log("User not found");
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		// Creaet a password reset token
+		const token = jwt.sign({ email }, jwtSecret, { expiresIn: "1h" });
+
+		// Save the hashed token in the database
+		await usersCollection.updateOne(
+			{
+				email,
+			},
+			{
+				$set: {
+					resetToken: await bcrypt.hash(token, 10),
+				},
+			}
+		);
+
+		// Send the password reset email
+		await sendEmail(
+			email,
+			"Password Reset",
+			`Click here to reset your password: http://localhost:3000/reset-password/${token}`
+		);
+
+		res.json({ message: "Password reset email sent" });
+	} catch (error) {
+		console.error("Error during password reset:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+}
