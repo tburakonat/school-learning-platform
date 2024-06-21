@@ -7,9 +7,6 @@ import {
 } from "../utils/config.js";
 import { User } from "../models/user.js";
 import { sendEmail } from "../utils/email.js";
-import fs from "fs";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
 
 export async function login(req, res) {
 	const { identifier, password, captchaValue } = req.body;
@@ -131,23 +128,12 @@ export async function resetPassword(req, res) {
 		user.passwordResetTokenCreatedAt = new Date();
 		await user.save();
 
-		const __filename = fileURLToPath(import.meta.url);
-		const __dirname = dirname(__filename);
-		const templatePath = path.join(
-			__dirname,
-			"..",
-			"templates",
-			"reset-password.html"
-		);
-		let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
-
 		const resetLink = `${BASE_URL_FOR_EMAIL}/create-password/${token}`;
-		htmlTemplate = htmlTemplate.replace("{{resetLink}}", resetLink);
 
 		await sendEmail(
 			email,
 			"Password Reset - School Learning Platform",
-			htmlTemplate
+			resetLink
 		);
 
 		res.json({ message: "Password reset email sent" });
