@@ -1,10 +1,8 @@
-import { client } from "../utils/db.js";
+import { User } from "../models/user.js";
 
 export async function getUsers(req, res) {
 	try {
-		const database = client.db("myDatabase");
-		const usersCollection = database.collection("users");
-		const users = await usersCollection.find({}).toArray();
+		const users = await User.find({});
 		res.json(users);
 	} catch (error) {
 		console.error("Error fetching users:", error);
@@ -17,12 +15,7 @@ export async function updateUserRole(req, res) {
 	const { role } = req.body;
 
 	try {
-		const database = client.db("myDatabase");
-		const usersCollection = database.collection("users");
-		const result = await usersCollection.findOneAndUpdate(
-			{ username },
-			{ $set: { role } }
-		);
+		await User.findOneAndUpdate({ username }, { role });
 
 		res.json({ message: "User role updated successfully" });
 	} catch (error) {
@@ -33,11 +26,7 @@ export async function updateUserRole(req, res) {
 
 export async function getStudents(req, res) {
 	try {
-		const database = client.db("myDatabase");
-		const usersCollection = database.collection("users");
-		const students = await usersCollection
-			.find({ role: "student" })
-			.toArray();
+		const students = await User.find({ role: "student" });
 		res.json(students);
 	} catch (error) {
 		console.error("Error fetching students:", error);

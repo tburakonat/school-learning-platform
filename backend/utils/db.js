@@ -1,23 +1,12 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import mongoose from "mongoose";
 import { MONGO_URI } from "./config.js";
 
-const client = new MongoClient(MONGO_URI, {
-	serverApi: {
-		version: ServerApiVersion.v1,
-		strict: true,
-		deprecationErrors: true,
-	},
-});
-
-async function connectToDatabase() {
+export async function connectToDatabase() {
 	try {
-		await client.connect();
+		await mongoose.connect(MONGO_URI);
+
 		console.log("Connected to MongoDB");
 	} catch (err) {
 		console.error("Error connecting to MongoDB:", err);
 	}
 }
-
-connectToDatabase();
-
-export { client };

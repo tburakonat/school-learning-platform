@@ -1,6 +1,10 @@
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 const CreateNewPassword = () => {
+	const navigate = useNavigate();
+	const { token } = useParams();
 	const [formData, setFormData] = useState({
 		newPassword: "",
 		confirmNewPassword: "",
@@ -14,11 +18,32 @@ const CreateNewPassword = () => {
 		});
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
-		// Add form submission logic here
-		console.log("New Password:", formData.newPassword);
-		console.log("Confirm New Password:", formData.confirmNewPassword);
+
+		try {
+			const response = await fetch(
+				`${API_BASE_URL}/create-password/${token}`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ password: formData.newPassword }),
+				}
+			);
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || "Password reset failed");
+			}
+
+			console.log(data);
+			navigate("/login");
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return (

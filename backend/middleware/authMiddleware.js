@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import { ObjectId } from "mongodb";
-import { client } from "../utils/db.js";
 import { JWT_SECRET } from "../utils/config.js";
+import { User } from "../models/user.js";
 
 export const verifyAdmin = (req, res, next) => {
 	try {
@@ -26,11 +24,8 @@ export const verifyTeacher = async (req, res, next) => {
 
 	try {
 		const decoded = jwt.verify(token, JWT_SECRET);
-		const database = client.db("myDatabase");
-		const usersCollection = database.collection("users");
-		const user = await usersCollection.findOne({
-			_id: new ObjectId(decoded.userId),
-		});
+
+		const user = await User.findById(decoded.userId);
 
 		if (user.role !== "teacher") {
 			return res.status(403).json({ message: "Forbidden" });

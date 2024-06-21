@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 const ResetPassword = () => {
 	const [email, setEmail] = useState("");
@@ -8,10 +9,28 @@ const ResetPassword = () => {
 		setEmail(e.target.value);
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
-		// Add form submission logic here
-		console.log("Reset password email:", email);
+
+		try {
+			const response = await fetch(`${API_BASE_URL}/reset-password`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email }),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || "Password reset failed");
+			}
+
+			console.log(data);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	return (

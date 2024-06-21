@@ -1,7 +1,15 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { client } from "../utils/db.js";
-import { JWT_SECRET, RECAPTCHA_SECRET_KEY } from "../utils/config.js";
+import {
+	JWT_SECRET,
+	RECAPTCHA_SECRET_KEY,
+	BASE_URL_FOR_EMAIL,
+} from "../utils/config.js";
+import { User } from "../models/user.js";
+import { sendEmail } from "../utils/email.js";
+import fs from "fs";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 export async function login(req, res) {
 	const { identifier, password, captchaValue } = req.body;
@@ -26,10 +34,7 @@ export async function login(req, res) {
 	}
 
 	try {
-		const database = client.db("myDatabase");
-		const usersCollection = database.collection("users");
-
-		const user = await usersCollection.findOne({
+		const user = await User.findOne({
 			$or: [{ username: identifier }, { email: identifier }],
 		});
 
@@ -77,11 +82,7 @@ export async function register(req, res) {
 	}
 
 	try {
-		const database = client.db("myDatabase");
-		const usersCollection = database.collection("users");
-
-		// Check if user already exists
-		const existingUser = await usersCollection.findOne({
+		const existingUser = await User.findOne({
 			$or: [{ username }, { email }],
 		});
 
@@ -92,15 +93,14 @@ export async function register(req, res) {
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-		const result = await usersCollection.insertOne({
+		const user = new User({
 			username,
 			email,
 			password: hashedPassword,
-			role: "student",
 		});
 
-		console.log("User registered:", result);
-		// Generate a JWT token
+		const result = await user.save();
+
 		const token = jwt.sign(
 			{ userId: result.insertedId, username, role: "student" },
 			JWT_SECRET,
@@ -118,39 +118,98 @@ export async function resetPassword(req, res) {
 	const { email } = req.body;
 
 	try {
-		const database = client.db("myDatabase");
-		const usersCollection = database.collection("users");
-
-		const user = await usersCollection.findOne({ email });
+		const user = await User.findOne({ email });
 
 		if (!user) {
 			console.log("User not found");
 			return res.status(404).json({ message: "User not found" });
 		}
 
-		// Creaet a password reset token
-		const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "1h" });
+		const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "10m" });
 
-		// Save the hashed token in the database
-		await usersCollection.updateOne(
+		user.passwordResetToken = await bcrypt.hash(token, 10);
+		user.passwordResetTokenCreatedAt = new Date();
+		await user.save();
+
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = dirname(__filename);
+		const templatePath = path.join(
+			__dirname,
+			"..",
+			"templates",
+			"reset-password.html"
+		);
+		let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
+
+		const resetLink = `${BASE_URL_FOR_EMAIL}/create-password/${token}`;
+		htmlTemplate = htmlTemplate.replace("{{resetLink}}", resetLink);
+
+		await sendEmail(
+			email,
+			"Password Reset - School Learning Platform",
+			htmlTemplate
+		);
+
+		res.json({ message: "Password reset email sent" });
+	} catch (error) {
+		console.error("Error during password reset:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+}
+
+export async function createPassword(req, res) {
+	const { token } = req.params;
+	const { password } = req.body;
+
+	let decodedToken;
+	try {
+		decodedToken = jwt.verify(token, JWT_SECRET);
+	} catch (error) {
+		return res.status(400).json({ message: "Invalid token" });
+	}
+
+	try {
+		const user = await User.findOne({
+			email: decodedToken.email,
+		});
+
+		if (!user) {
+			console.log("User not found");
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		const isValid = await bcrypt.compare(token, user.passwordResetToken);
+
+		if (!isValid) {
+			console.log("Invalid token");
+			return res.status(400).json({ message: "Invalid token" });
+		}
+
+		const currentTime = new Date();
+		const tokenValidTill = new Date(user.passwordResetTokenCreatedAt);
+		tokenValidTill.setHours(tokenValidTill.getHours() + 1);
+
+		if (currentTime > tokenValidTill) {
+			console.log("Token expired");
+			return res.status(400).json({ message: "Token expired" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+		user.password = hashedPassword;
+
+		await user.save();
+
+		await User.updateOne(
+			{ email: decodedToken.email },
 			{
-				email,
-			},
-			{
-				$set: {
-					resetToken: await bcrypt.hash(token, 10),
+				$unset: {
+					passwordResetToken: "",
+					passwordResetTokenCreatedAt: "",
 				},
 			}
 		);
 
-		// Send the password reset email
-		await sendEmail(
-			email,
-			"Password Reset",
-			`Click here to reset your password: https://school-learning-platform-mue3.vercel.app/reset-password/${token}`
-		);
-
-		res.json({ message: "Password reset email sent" });
+		res.json({ message: "Password updated successfully" });
 	} catch (error) {
 		console.error("Error during password reset:", error);
 		res.status(500).json({ message: "Internal server error" });
