@@ -16,13 +16,16 @@ const AdminDashboard = () => {
 
 		const fetchUsers = async () => {
 			try {
-				const response = await fetch("http://localhost:3000/users", {
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem(
-							"token"
-						)}`,
-					},
-				});
+				const response = await fetch(
+					"https://school-learning-platform-mue3.vercel.app/users",
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem(
+								"token"
+							)}`,
+						},
+					}
+				);
 				const data = await response.json();
 				setUsers(data);
 			} catch (error) {
@@ -37,7 +40,7 @@ const AdminDashboard = () => {
 	const handleRoleChange = async (username, newRole) => {
 		try {
 			const response = await fetch(
-				`http://localhost:3000/users/${username}/role`,
+				`https://school-learning-platform-mue3.vercel.app//users/${username}/role`,
 				{
 					method: "PATCH",
 					headers: {

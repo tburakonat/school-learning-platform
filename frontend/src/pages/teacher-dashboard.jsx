@@ -9,13 +9,16 @@ const TeacherDashboard = () => {
 	useEffect(() => {
 		const fetchStudents = async () => {
 			try {
-				const response = await fetch("http://localhost:3000/students", {
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem(
-							"token"
-						)}`,
-					},
-				});
+				const response = await fetch(
+					"https://school-learning-platform-mue3.vercel.app/students",
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem(
+								"token"
+							)}`,
+						},
+					}
+				);
 				const data = await response.json();
 				if (!response.ok) {
 					throw new Error(data.message || "Failed to fetch students");

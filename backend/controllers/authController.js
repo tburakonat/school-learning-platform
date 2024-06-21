@@ -152,7 +152,7 @@ export async function resetPassword(req, res) {
 		await sendEmail(
 			email,
 			"Password Reset",
-			`Click here to reset your password: http://localhost:3000/reset-password/${token}`
+			`Click here to reset your password: https://school-learning-platform-mue3.vercel.app/reset-password/${token}`
 		);
 
 		res.json({ message: "Password reset email sent" });
