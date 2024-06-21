@@ -14,9 +14,7 @@ app.use(express.json());
 app.use(authRoutes);
 app.use(userRoutes);
 
-app.get("*", (req, res) => {
-	res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+// i have to return the react app when someone clicks to the change password link
 
 app.listen(3000, () => {
 	console.log("Server is running on port 3000");
