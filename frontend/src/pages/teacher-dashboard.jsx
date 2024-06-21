@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
+import { API_BASE_URL } from "../config";
 
 const TeacherDashboard = () => {
 	const { user } = useContext(UserContext);
@@ -9,16 +10,13 @@ const TeacherDashboard = () => {
 	useEffect(() => {
 		const fetchStudents = async () => {
 			try {
-				const response = await fetch(
-					"https://school-learning-platform-mue3.vercel.app/students",
-					{
-						headers: {
-							Authorization: `Bearer ${localStorage.getItem(
-								"token"
-							)}`,
-						},
-					}
-				);
+				const response = await fetch(`${API_BASE_URL}/students`, {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem(
+							"token"
+						)}`,
+					},
+				});
 				const data = await response.json();
 				if (!response.ok) {
 					throw new Error(data.message || "Failed to fetch students");

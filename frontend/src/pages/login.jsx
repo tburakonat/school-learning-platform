@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/UserContext";
 import ReCAPTCHA from "react-google-recaptcha";
+import { API_BASE_URL } from "../config";
 
 const Login = () => {
 	const recaptcha = useRef();
@@ -33,16 +34,13 @@ const Login = () => {
 		}
 
 		try {
-			const response = await fetch(
-				"https://school-learning-platform-mue3.vercel.app/login",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ ...formData, captchaValue }),
-				}
-			);
+			const response = await fetch(`${API_BASE_URL}/login`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ ...formData, captchaValue }),
+			});
 
 			const data = await response.json();
 			if (!response.ok) {

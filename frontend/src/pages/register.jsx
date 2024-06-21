@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserContext";
 import ReCAPTCHA from "react-google-recaptcha";
+import { API_BASE_URL } from "../config";
 
 const Register = () => {
 	const recaptcha = useRef();
@@ -39,14 +40,11 @@ const Register = () => {
 		}
 
 		try {
-			const response = await fetch(
-				"https://school-learning-platform-mue3.vercel.app/register",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ ...formData, captchaValue }),
-				}
-			);
+			const response = await fetch(`${API_BASE_URL}/register`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ ...formData, captchaValue }),
+			});
 
 			const data = await response.json();
 			if (!response.ok) {

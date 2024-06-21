@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserContext";
+import { API_BASE_URL } from "../config";
 
 const AdminDashboard = () => {
 	const { user } = useAuth();
@@ -16,16 +17,13 @@ const AdminDashboard = () => {
 
 		const fetchUsers = async () => {
 			try {
-				const response = await fetch(
-					"https://school-learning-platform-mue3.vercel.app/users",
-					{
-						headers: {
-							Authorization: `Bearer ${localStorage.getItem(
-								"token"
-							)}`,
-						},
-					}
-				);
+				const response = await fetch(`${API_BASE_URL}/users`, {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem(
+							"token"
+						)}`,
+					},
+				});
 				const data = await response.json();
 				setUsers(data);
 			} catch (error) {
@@ -40,7 +38,7 @@ const AdminDashboard = () => {
 	const handleRoleChange = async (username, newRole) => {
 		try {
 			const response = await fetch(
-				`https://school-learning-platform-mue3.vercel.app//users/${username}/role`,
+				`${API_BASE_URL}/users/${username}/role`,
 				{
 					method: "PATCH",
 					headers: {
