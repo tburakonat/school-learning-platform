@@ -126,10 +126,12 @@ const Register = () => {
 						required
 					/>
 				</div>
-				<ReCAPTCHA
-					sitekey="6Leb0f0pAAAAAEIHe2ZYSnst33YlW16v1F_TWUb2"
-					ref={recaptcha}
-				/>
+				<div className="mb-4">
+					<ReCAPTCHA
+						sitekey="6Leb0f0pAAAAAEIHe2ZYSnst33YlW16v1F_TWUb2"
+						ref={recaptcha}
+					/>
+				</div>
 				<button
 					type="submit"
 					className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-200"

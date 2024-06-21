@@ -9,7 +9,27 @@ const jwtSecret = process.env.JWT_SECRET;
 const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
 
 export async function login(req, res) {
-	const { identifier, password } = req.body;
+	const { identifier, password, captchaValue } = req.body;
+
+	try {
+		const verifyResponse = await fetch(
+			`https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${captchaValue}`,
+			{
+				method: "POST",
+			}
+		);
+
+		const data = await verifyResponse.json();
+
+		if (!data.success) {
+			console.error("Invalid reCAPTCHA token", data);
+			return res.status(400).json({ message: "Invalid reCAPTCHA token" });
+		}
+	} catch (error) {
+		console.error("Error verifying reCAPTCHA token:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+
 	try {
 		const database = client.db("myDatabase");
 		const usersCollection = database.collection("users");

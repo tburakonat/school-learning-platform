@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/UserContext";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
+	const recaptcha = useRef();
 	const { login } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -23,13 +25,20 @@ const Login = () => {
 	const handleSubmit = async e => {
 		e.preventDefault();
 
+		const captchaValue = recaptcha.current.getValue();
+
+		if (!captchaValue) {
+			setError("Please complete the reCAPTCHA");
+			return;
+		}
+
 		try {
 			const response = await fetch("http://localhost:3000/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify(formData),
+				body: JSON.stringify({ ...formData, captchaValue }),
 			});
 
 			const data = await response.json();
@@ -80,6 +89,12 @@ const Login = () => {
 						onChange={handleChange}
 						className="w-full p-2 border border-gray-300 rounded"
 						required
+					/>
+				</div>
+				<div className="mb-4">
+					<ReCAPTCHA
+						sitekey="6Leb0f0pAAAAAEIHe2ZYSnst33YlW16v1F_TWUb2"
+						ref={recaptcha}
 					/>
 				</div>
 				<button
