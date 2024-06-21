@@ -1,19 +1,14 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { client } from "../utils/db.js";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const jwtSecret = process.env.JWT_SECRET;
-const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+import { JWT_SECRET, RECAPTCHA_SECRET_KEY } from "../utils/config.js";
 
 export async function login(req, res) {
 	const { identifier, password, captchaValue } = req.body;
 
 	try {
 		const verifyResponse = await fetch(
-			`https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${captchaValue}`,
+			`https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${captchaValue}`,
 			{
 				method: "POST",
 			}
@@ -46,7 +41,7 @@ export async function login(req, res) {
 					email: user.email,
 					role: user.role,
 				},
-				jwtSecret,
+				JWT_SECRET,
 				{ expiresIn: "1h" }
 			);
 			res.json({ message: "Login successful", token });
@@ -64,7 +59,7 @@ export async function register(req, res) {
 
 	try {
 		const verifyResponse = await fetch(
-			`https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${captchaValue}`,
+			`https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${captchaValue}`,
 			{
 				method: "POST",
 			}
@@ -108,7 +103,7 @@ export async function register(req, res) {
 		// Generate a JWT token
 		const token = jwt.sign(
 			{ userId: result.insertedId, username, role: "student" },
-			process.env.JWT_SECRET,
+			JWT_SECRET,
 			{ expiresIn: "1h" }
 		);
 
@@ -134,7 +129,7 @@ export async function resetPassword(req, res) {
 		}
 
 		// Creaet a password reset token
-		const token = jwt.sign({ email }, jwtSecret, { expiresIn: "1h" });
+		const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "1h" });
 
 		// Save the hashed token in the database
 		await usersCollection.updateOne(

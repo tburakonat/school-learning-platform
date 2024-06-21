@@ -2,15 +2,12 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { ObjectId } from "mongodb";
 import { client } from "../utils/db.js";
-
-dotenv.config();
-
-const jwtSecret = process.env.JWT_SECRET;
+import { JWT_SECRET } from "../utils/config.js";
 
 export const verifyAdmin = (req, res, next) => {
 	try {
 		const token = req.headers.authorization.split(" ")[1];
-		const decodedToken = jwt.verify(token, jwtSecret);
+		const decodedToken = jwt.verify(token, JWT_SECRET);
 		if (decodedToken.role !== "admin") {
 			return res
 				.status(403)
@@ -28,7 +25,7 @@ export const verifyTeacher = async (req, res, next) => {
 	if (!token) return res.status(401).json({ message: "Unauthorized" });
 
 	try {
-		const decoded = jwt.verify(token, jwtSecret);
+		const decoded = jwt.verify(token, JWT_SECRET);
 		const database = client.db("myDatabase");
 		const usersCollection = database.collection("users");
 		const user = await usersCollection.findOne({
