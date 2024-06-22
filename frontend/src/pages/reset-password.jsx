@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import toast from "react-hot-toast";
 
 const ResetPassword = () => {
 	const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const ResetPassword = () => {
 		e.preventDefault();
 
 		try {
+			toast.loading("Loading");
 			const response = await fetch(`${API_BASE_URL}/reset-password`, {
 				method: "POST",
 				headers: {
@@ -24,9 +26,13 @@ const ResetPassword = () => {
 			const data = await response.json();
 
 			if (!response.ok) {
+				toast.dismiss();
+				toast.error("Email not sent. Please try again later.");
 				throw new Error(data.message || "Password reset failed");
 			}
 
+			toast.dismiss();
+			toast.success("Email sent successfully");
 			console.log(data);
 		} catch (error) {
 			console.error(error);

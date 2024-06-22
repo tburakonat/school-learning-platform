@@ -10,6 +10,8 @@ import Me from "./pages/me";
 import ProtectedRoute from "./components/protected-route";
 import AdminDashboard from "./pages/admin-dashboard";
 import TeacherDashboard from "./pages/teacher-dashboard";
+import NotFound from "./pages/not-found";
+import { Toaster } from "react-hot-toast";
 
 function App() {
 	return (
@@ -64,7 +66,9 @@ function App() {
 						path="/create-password/:token"
 						element={<CreatePassword />}
 					/>
+					<Route path="*" element={<NotFound />} />
 				</Routes>
+				<Toaster position="bottom-center" />
 			</Layout>
 		</Router>
 	);

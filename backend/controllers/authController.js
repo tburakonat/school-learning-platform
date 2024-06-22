@@ -119,7 +119,9 @@ export async function resetPassword(req, res) {
 
 		if (!user) {
 			console.log("User not found");
-			return res.status(404).json({ message: "User not found" });
+			// Don't reveal whether the email exists or not wait for a few seconds before responding
+			await new Promise(resolve => setTimeout(resolve, 1500));
+			return res.json({ message: "Password reset email sent" });
 		}
 
 		const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "10m" });
