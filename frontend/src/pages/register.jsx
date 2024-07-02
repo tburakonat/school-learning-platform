@@ -48,6 +48,7 @@ const Register = () => {
 
 			const data = await response.json();
 			if (!response.ok) {
+				recaptcha.current.reset();
 				throw new Error(data.message || "Registration failed");
 			}
 			login(data.token);
