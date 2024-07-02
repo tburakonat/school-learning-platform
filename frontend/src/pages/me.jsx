@@ -11,7 +11,7 @@ const Me = () => {
 	};
 
 	return (
-		<div className="mx-auto max-w-7xl p-2 lg:px-8 ">
+		<div className="mx-8 max-w-7xl p-2 lg:px-8">
 			<div className="pt-10">
 				<div className="mb-6">
 					<h1 className="text-4xl font-bold font-display">
