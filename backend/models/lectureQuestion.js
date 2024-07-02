@@ -1,8 +1,8 @@
-import { Schema, model } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 const LectureQuestionSchema = new Schema({
   lectureId: {
-    type: ObjectId,
+    type: Types.ObjectId,
     required: true,
   },
   questionText: {
@@ -19,4 +19,4 @@ const LectureQuestionSchema = new Schema({
   },
 });
 
-export const Course = model("LectureQuestion", LectureQuestionSchema);
+export const LectureQuestion = model("LectureQuestion", LectureQuestionSchema);

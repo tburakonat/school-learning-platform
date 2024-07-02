@@ -1,14 +1,14 @@
-import { Schema, model } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 const StudentSchema = new Schema({
   userId: {
-    type: ObjectId,
+    type: Types.ObjectId,
     required: true,
   },
   lecturesViewed: {
-    type: Array[ObjectId],
+    type: [Types.ObjectId],
     default: [],
   },
 });
 
-export const User = model("Student", StudentSchema);
+export const Student = model("Student", StudentSchema);

@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 const LectureContentSchema = new Schema({
   name: {
@@ -17,7 +17,7 @@ const LectureContentSchema = new Schema({
 const LectureSchema = new Schema(
   {
     courseId: {
-      type: ObjectId,
+      type: Types.ObjectId,
       required: true,
     },
     name: {
@@ -31,4 +31,4 @@ const LectureSchema = new Schema(
   { timestamps: true }
 );
 
-export const Course = model("Lecture", LectureSchema);
+export const Lecture = model("Lecture", LectureSchema);

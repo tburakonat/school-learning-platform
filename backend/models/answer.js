@@ -1,13 +1,13 @@
-import { Schema, model } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
-const Answer = new Schema(
+const AnswerSchema = new Schema(
   {
     lectureQuestionId: {
-      type: ObjectId,
+      type: Types.ObjectId,
       required: true,
     },
     studentId: {
-      type: ObjectId,
+      type: Types.ObjectId,
       required: true,
     },
     answeredCorrectly: {
@@ -18,4 +18,4 @@ const Answer = new Schema(
   { timestamps: true }
 );
 
-export const Course = model("StudentAnswer", StudentAnswerSchema);
+export const Answer = model("Answer", AnswerSchema);
