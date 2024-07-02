@@ -19,7 +19,7 @@ const CourseSchema = new Schema(
     },
     studyProgram: {
       type: String,
-      enum: ["Is", "this", "even", "necessary?"],
+      enum: ["ditto", "here"],
     },
   },
   { timestamps: true }
