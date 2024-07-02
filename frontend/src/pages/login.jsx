@@ -44,6 +44,7 @@ const Login = () => {
 
 			const data = await response.json();
 			if (!response.ok) {
+				recaptcha.current.reset();
 				throw new Error(data.message || "Login failed");
 			}
 			login(data.token);
