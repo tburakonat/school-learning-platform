@@ -1,16 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/home";
-import Register from "./pages/register";
+import Home from "./pages/Home";
+import Register from "./pages/Register";
 import Login from "./pages/login";
-import ResetPassword from "./pages/reset-password";
-import CreatePassword from "./pages/create-password";
-import Layout from "./pages/layout";
-import AnonymousRoute from "./components/anonymous-route";
-import Me from "./pages/me";
+import ResetPassword from "./pages/ResetPassword";
+import CreatePassword from "./pages/CreateNewPassword";
+import Layout from "./pages/Layout";
+import AnonymousRoute from "./components/AnonymousRoute";
+import Me from "./pages/Me";
 import ProtectedRoute from "./components/protected-route";
-import AdminDashboard from "./pages/admin-dashboard";
-import TeacherDashboard from "./pages/teacher-dashboard";
-import NotFound from "./pages/not-found";
+import AdminDashboard from "./pages/AdminDashboard";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import NotFound from "./pages/NotFound";
 import { Toaster } from "react-hot-toast";
 
 function App() {
