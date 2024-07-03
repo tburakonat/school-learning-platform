@@ -1,6 +1,6 @@
 import { useAuth } from "../context/UserContext";
 
-const Me = () => {
+const UserHome = () => {
 	const { user } = useAuth();
 
 	const latestLecture = {
@@ -96,4 +96,4 @@ const Me = () => {
 	);
 };
 
-export default Me;
+export default UserHome;
