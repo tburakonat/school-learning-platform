@@ -4,16 +4,16 @@ import { Toaster } from "react-hot-toast";
 import AnonymousRoute from "./components/AnonymousRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Layout from "./pages/layout";
-import AdminDashboardPage from "./pages/admin-dashboard";
-import CreatePasswordPage from "./pages/create-new-password";
-import HomePage from "./pages/home";
-import LoginPage from "./pages/login";
-import NotFoundPage from "./pages/not-found";
-import RegisterPage from "./pages/register";
-import ResetPasswordPage from "./pages/reset-password";
-import TeacherDashboardPage from "./pages/teacher-dashboard";
-import UserHomePage from "./pages/user-home";
+import Layout from "./pages/Layout";
+import AdminDashboardPage from "./pages/AdminDashboard";
+import CreatePasswordPage from "./pages/CreateNewPassword";
+import HomePage from "./pages/Home";
+import LoginPage from "./pages/Login";
+import NotFoundPage from "./pages/NotFound";
+import RegisterPage from "./pages/Register";
+import ResetPasswordPage from "./pages/ResetPassword";
+import TeacherDashboardPage from "./pages/TeacherDashboard";
+import UserHomePage from "./pages/UserHome";
 
 function App() {
 	return (
@@ -63,7 +63,10 @@ function App() {
 							</ProtectedRoute>
 						}
 					/>
-					<Route path="/reset-password" element={<ResetPasswordPage />} />
+					<Route
+						path="/reset-password"
+						element={<ResetPasswordPage />}
+					/>
 					<Route
 						path="/create-password/:token"
 						element={<CreatePasswordPage />}
