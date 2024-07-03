@@ -1,29 +1,31 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/home";
-import Register from "./pages/register";
-import Login from "./pages/login";
-import ResetPassword from "./pages/reset-password";
-import CreatePassword from "./pages/create-password";
-import Layout from "./pages/layout";
-import AnonymousRoute from "./components/anonymous-route";
-import Me from "./pages/me";
-import ProtectedRoute from "./components/protected-route";
-import AdminDashboard from "./pages/admin-dashboard";
-import TeacherDashboard from "./pages/teacher-dashboard";
-import NotFound from "./pages/not-found";
 import { Toaster } from "react-hot-toast";
+
+import AnonymousRoute from "./components/AnonymousRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import Layout from "./pages/layout";
+import AdminDashboardPage from "./pages/admin-dashboard";
+import CreatePasswordPage from "./pages/create-new-password";
+import HomePage from "./pages/home";
+import LoginPage from "./pages/login";
+import NotFoundPage from "./pages/not-found";
+import RegisterPage from "./pages/register";
+import ResetPasswordPage from "./pages/reset-password";
+import TeacherDashboardPage from "./pages/teacher-dashboard";
+import UserHomePage from "./pages/user-home";
 
 function App() {
 	return (
 		<Router>
 			<Layout>
 				<Routes>
-					<Route path="/" element={<Home />} />
+					<Route path="/" element={<HomePage />} />
 					<Route
 						path="/login"
 						element={
 							<AnonymousRoute>
-								<Login />
+								<LoginPage />
 							</AnonymousRoute>
 						}
 					/>
@@ -31,7 +33,7 @@ function App() {
 						path="/register"
 						element={
 							<AnonymousRoute>
-								<Register />
+								<RegisterPage />
 							</AnonymousRoute>
 						}
 					/>
@@ -41,7 +43,7 @@ function App() {
 							<ProtectedRoute
 								roles={["student", "teacher", "admin"]}
 							>
-								<Me />
+								<UserHomePage />
 							</ProtectedRoute>
 						}
 					/>
@@ -49,7 +51,7 @@ function App() {
 						path="/teacher-dashboard"
 						element={
 							<ProtectedRoute roles={["teacher"]}>
-								<TeacherDashboard />
+								<TeacherDashboardPage />
 							</ProtectedRoute>
 						}
 					/>
@@ -57,16 +59,16 @@ function App() {
 						path="/admin-dashboard"
 						element={
 							<ProtectedRoute roles={["admin"]}>
-								<AdminDashboard />
+								<AdminDashboardPage />
 							</ProtectedRoute>
 						}
 					/>
-					<Route path="/reset-password" element={<ResetPassword />} />
+					<Route path="/reset-password" element={<ResetPasswordPage />} />
 					<Route
 						path="/create-password/:token"
-						element={<CreatePassword />}
+						element={<CreatePasswordPage />}
 					/>
-					<Route path="*" element={<NotFound />} />
+					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 				<Toaster position="bottom-center" />
 			</Layout>
