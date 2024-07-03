@@ -48,13 +48,16 @@ const Me = () => {
 					)}
 				</div>
 
+				<h2 className="text-2xl font-semibold text-gray-800 mb-4">
+					Quick Links
+				</h2>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 					<div className="bg-white shadow rounded-lg p-6">
 						<h3 className="text-xl font-semibold text-gray-800 mb-2">
 							Pick Up Where You Left Off
 						</h3>
 						<p className="text-gray-600">
-							Continue from your last watched lecture and keep the
+							Continue from your last visited course and keep the
 							momentum going.
 						</p>
 						<button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
@@ -64,27 +67,27 @@ const Me = () => {
 
 					<div className="bg-white shadow rounded-lg p-6">
 						<h3 className="text-xl font-semibold text-gray-800 mb-2">
-							Watch the Newest Lecture
+							Explore All Courses
 						</h3>
 						<p className="text-gray-600">
-							Check out the latest lecture and stay up to date
-							with new content.
+							Discover new courses and lectures to expand your
+							knowledge.
 						</p>
-						<button className="mt-4 bg-green-600 text-white px-4 py-2 rounded">
-							Watch Now
+						<button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+							See Courses
 						</button>
 					</div>
 
 					<div className="bg-white shadow rounded-lg p-6">
 						<h3 className="text-xl font-semibold text-gray-800 mb-2">
-							Take This Multiple Choice Test
+							Profile Information
 						</h3>
 						<p className="text-gray-600">
-							Test your knowledge with a quick multiple-choice
-							test.
+							Edit your profile information and update your
+							settings.
 						</p>
-						<button className="mt-4 bg-red-600 text-white px-4 py-2 rounded">
-							Take Test
+						<button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+							Edit Profile
 						</button>
 					</div>
 				</div>

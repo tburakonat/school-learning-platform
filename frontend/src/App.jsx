@@ -12,6 +12,10 @@ import AdminDashboard from "./pages/admin-dashboard";
 import TeacherDashboard from "./pages/teacher-dashboard";
 import NotFound from "./pages/not-found";
 import { Toaster } from "react-hot-toast";
+import Quiz from "./pages/quiz";
+import LectureList from "./pages/LectureList";
+import UserSettings from "./pages/user-profile";
+import TeacherLectureManager from "./pages/edit-lecture";
 
 function App() {
 	return (
@@ -19,6 +23,19 @@ function App() {
 			<Layout>
 				<Routes>
 					<Route path="/" element={<Home />} />
+					<Route
+						path="/courses/:courseId/lectures/:lectureId/quiz"
+						element={<Quiz />}
+					/>
+					<Route path="/settings" element={<UserSettings />} />
+					<Route
+						path="/courses/:lectureId/lectures"
+						element={<LectureList />}
+					/>
+					<Route
+						path="/courses/:lectureId/lectures/:lectureId/edit"
+						element={<TeacherLectureManager />}
+					/>
 					<Route
 						path="/login"
 						element={
