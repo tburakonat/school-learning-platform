@@ -48,7 +48,7 @@ const Login = () => {
 				throw new Error(data.message || "Login failed");
 			}
 			login(data.token);
-			navigate(location.state?.from || "/me");
+			navigate(location.state?.from || "/dashboard");
 		} catch (error) {
 			setError(error.message);
 		}

@@ -64,27 +64,11 @@ const Navbar = () => {
 					) : (
 						<>
 							<Link
-								to="/me"
+								to="/dashboard"
 								className="text-white mx-2 hover:underline"
 							>
-								Profile
+								Dashboard
 							</Link>
-							{user?.role === "admin" && (
-								<Link
-									to="/admin-dashboard"
-									className="text-white mx-2 hover:underline"
-								>
-									Admin Dashboard
-								</Link>
-							)}
-							{user?.role === "teacher" && (
-								<Link
-									to="/teacher-dashboard"
-									className="text-white mx-2 hover:underline"
-								>
-									Teacher Dashboard
-								</Link>
-							)}
 							<button
 								onClick={handleLogout}
 								className="text-white mx-2 hover:underline"
@@ -116,27 +100,11 @@ const Navbar = () => {
 					) : (
 						<>
 							<Link
-								to="/me"
+								to="/dashboard"
 								className="block text-white px-4 py-2 hover:underline"
 							>
-								Profile
+								Dashboard
 							</Link>
-							{user?.role === "admin" && (
-								<Link
-									to="/admin-dashboard"
-									className="block text-white px-4 py-2 hover:underline"
-								>
-									Admin Dashboard
-								</Link>
-							)}
-							{user?.role === "teacher" && (
-								<Link
-									to="/teacher-dashboard"
-									className="block text-white px-4 py-2 hover:underline"
-								>
-									Teacher Dashboard
-								</Link>
-							)}
 							<button
 								onClick={handleLogout}
 								className="block w-full text-left text-white px-4 py-2 hover:underline"

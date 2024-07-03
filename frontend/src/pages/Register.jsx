@@ -52,7 +52,7 @@ const Register = () => {
 				throw new Error(data.message || "Registration failed");
 			}
 			login(data.token);
-			navigate("/me");
+			navigate("/dashboard");
 		} catch (error) {
 			setError(error.message);
 		}

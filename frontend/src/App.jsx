@@ -13,7 +13,10 @@ import NotFoundPage from "./pages/NotFound";
 import RegisterPage from "./pages/Register";
 import ResetPasswordPage from "./pages/ResetPassword";
 import TeacherDashboardPage from "./pages/TeacherDashboard";
-import UserHomePage from "./pages/UserHome";
+import Dashboard from "./pages/Dashboard";
+import UserSettings from "./pages/UserSettings";
+import CourseList from "./pages/CourseList";
+import LectureList from "./pages/LectureList";
 
 function App() {
 	return (
@@ -21,6 +24,39 @@ function App() {
 			<Layout>
 				<Routes>
 					<Route path="/" element={<HomePage />} />
+					<Route
+						path="/dashboard"
+						element={
+							<ProtectedRoute
+								roles={["student", "teacher", "admin"]}
+							>
+								<Dashboard />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/teacher/users"
+						element={
+							<ProtectedRoute roles={["teacher"]}>
+								<TeacherDashboardPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/admin/users"
+						element={
+							<ProtectedRoute roles={["admin"]}>
+								<AdminDashboardPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route path="/courses" element={<CourseList />} />
+					<Route
+						path="/courses/:courseId/lectures"
+						element={<LectureList />}
+					/>
+
+					{/* User Account Management Related Pages  */}
 					<Route
 						path="/login"
 						element={
@@ -43,23 +79,7 @@ function App() {
 							<ProtectedRoute
 								roles={["student", "teacher", "admin"]}
 							>
-								<UserHomePage />
-							</ProtectedRoute>
-						}
-					/>
-					<Route
-						path="/teacher-dashboard"
-						element={
-							<ProtectedRoute roles={["teacher"]}>
-								<TeacherDashboardPage />
-							</ProtectedRoute>
-						}
-					/>
-					<Route
-						path="/admin-dashboard"
-						element={
-							<ProtectedRoute roles={["admin"]}>
-								<AdminDashboardPage />
+								<UserSettings />
 							</ProtectedRoute>
 						}
 					/>
